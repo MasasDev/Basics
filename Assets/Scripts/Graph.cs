@@ -1,49 +1,56 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 
 public class Graph : MonoBehaviour
 {
     [SerializeField] private Transform pointPrefab;
-    [SerializeField, Range(10, 100)] private int resolution = 10;
+    [SerializeField, Range(10,100)] private int resolution = 10;
+    [SerializeField] FunctionLibrary.FunctionName functionName;
 
     private Transform[] points;
+    private float range = 2f;
 
     private void Awake()
     {
-        Vector3 position = Vector3.zero;
+        float step = range / resolution;
 
-        float range = 2f;
+        Vector3 scale = Vector3.one * step;
 
-        Vector3 scale = Vector3.one * (range / resolution);
-
-        float xOffset = 0.5f;
-
-        points = new Transform[resolution];
+        points = new Transform[resolution * resolution];
 
         for (int i = 0; i < points.Length; i++)
         {
             Transform point = points[i] = Instantiate(pointPrefab);
 
-            position.x = (i + xOffset) * (range/resolution) - 1;
-
-            point.localPosition = position;
             point.localScale = scale;
             point.SetParent(transform,false);
         }
     }
     private void Update()
     {
+        FunctionLibrary.Function function = FunctionLibrary.GetFunction(functionName);
+
         float time = Time.time;
 
-        for (int i = 0; i < points.Length; i++)
+        float step = range / resolution;
+
+        float u = 0;
+        float v = 0.5f * step - 1;
+
+        for (int i = 0, x = 0, z = 0; i < points.Length; i++, x++)
         {
+            if (x == resolution)
+            {
+                x = 0;
+                z += 1;
+                v = (z + 0.5f) * step - 1;
+            }
+            u = (x + 0.5f) * step - 1;
+
             Transform point = points[i];
 
-            Vector3 position = point.localPosition;
-
-            position.y = Mathf.Sin(Mathf.PI * (position.x + time));
-
-            point.localPosition = position;
+            point.localPosition = function(u, v, time);
         }
     }
 }
