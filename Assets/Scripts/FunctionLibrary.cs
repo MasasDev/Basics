@@ -23,6 +23,32 @@ public static class FunctionLibrary
     {
         return functions[(int)functionName];
     }
+    public static FunctionName GetNextFunctionName(FunctionName name)
+    {
+        if ((int)name < functions.Length - 1)
+        {
+            return name + 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    public static FunctionName GetRandomFunctionName(FunctionName name)
+    {
+        FunctionName randomName = (FunctionName) Random.Range(1, functions.Length);
+
+        if(randomName == name)
+        {
+            return FunctionName.Wave;
+        }
+
+        return randomName;
+    }
+    public static Vector3 Morph(float u, float v, float t, Function from, Function to, float progress)
+    {
+        return Vector3.LerpUnclamped(from(u, v, t), to(u, v, t), SmoothStep(0, 1, progress));
+    }
     public static Vector3 Wave(float u, float v, float t)
     {
         Vector3 p;
