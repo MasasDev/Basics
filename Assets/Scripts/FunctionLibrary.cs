@@ -1,6 +1,3 @@
-using Unity.VisualScripting.Antlr3.Runtime.Tree;
-using UnityEditor;
-using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 using static UnityEngine.Mathf;
 
@@ -9,6 +6,8 @@ public static class FunctionLibrary
     public delegate Vector3 Function(float u, float v, float t);
 
     private static Function[] functions = { Wave, MultiWave, Ripple, Sphere, Torus };
+
+    public static int FunctionCount => functions.Length;
 
     public enum FunctionName
     {
